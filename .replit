@@ -1,0 +1,2 @@
+run = "julia -L test/runtests.jl"
+language = "Julia"
