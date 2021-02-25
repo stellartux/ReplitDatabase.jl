@@ -1,43 +1,48 @@
+"""
+    ReplitDatabaseCore
+
+The core functions which access the database.
+This implementation accessing the database using `curl` via shell calls.
+The `ReplitDB` interface type depends on these functions.
+"""
 module ReplitDatabaseCore
 
-export delete!, get, set!, list
-
 """
-    set!(key::AbstractString, value::AbstractString)
-
-Set the given key/value pair in the Repl.it database.
-"""
-function set!(key::AbstractString, value::AbstractString)
-    success(`curl -s $(ENV["REPLIT_DB_URL"]) -d $(key * "=" * value)`)
-end
-
-"""
-    get(key::AbstractString)
-
-Get the value associated with the given key in the Repl.it database.
-"""
-function get(key::AbstractString)
-    readchomp(`curl -s $(ENV["REPLIT_DB_URL"] * "/" * key)`)
-end
-
-"""
-    delete!(key::AbstractString)
+    delete!(key::AbstractString; url::AbstractString=ENV["REPLIT_DB_URL"])
 
 Deletes the value associated with the given key in the Repl.it database.
 """
-function delete!(key::AbstractString)
-    success(`curl -s -XDELETE $(ENV["REPLIT_DB_URL"] * "/" * key)`)
+function delete!(key::AbstractString; url::AbstractString=ENV["REPLIT_DB_URL"])
+    success(`curl -s -XDELETE $(url * "/" * key)`)
 end
 
 """
-    list()
-    list(prefix::AbstractString)
+    get(key::AbstractString; url::AbstractString=ENV["REPLIT_DB_URL"])
+
+Get the value associated with the given key in the Repl.it database.
+"""
+function get(key::AbstractString; url::AbstractString=ENV["REPLIT_DB_URL"])
+    readchomp(`curl -s $(url * "/" * key)`)
+end
+
+"""
+    list(; url::AbstractString=ENV["REPLIT_DB_URL"])
+    list(prefix::AbstractString; url::AbstractString=ENV["REPLIT_DB_URL"])
 
 Lists all of the keys in the Repl.it database, or all of the keys starting with `prefix` if specified.
 """
-function list(prefix=""::AbstractString)::Vector{<:AbstractString}
-    result = readchomp(`curl -s "$(ENV["REPLIT_DB_URL"])?prefix=$(prefix)"`)
+function list(prefix=""::AbstractString; url::AbstractString=ENV["REPLIT_DB_URL"])::Vector{<:AbstractString}
+    result = readchomp(`curl -s "$(url)?prefix=$(prefix)"`)
     isempty(result) ? String[] : split(result, '\n')
+end
+
+"""
+    set!(key::AbstractString, value::AbstractString; url::AbstractString=ENV["REPLIT_DB_URL"])
+
+Set the given key/value pair in the Repl.it database.
+"""
+function set!(key::AbstractString, value::AbstractString; url::AbstractString=ENV["REPLIT_DB_URL"])
+    success(`curl -s $(url) -d $(key * "=" * value)`)
 end
 
 end # module
