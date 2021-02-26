@@ -2,10 +2,11 @@
     ReplitDatabaseCore
 
 The core functions which access the database.
-This implementation accessing the database using `curl` via shell calls.
+This implementation accesses the database using `curl` via shell calls.
 The `ReplitDB` interface type depends on these functions.
 """
 module ReplitDatabaseCore
+export delete!, get, list, set!
 
 """
     delete!(key::AbstractString; url::AbstractString=ENV["REPLIT_DB_URL"])

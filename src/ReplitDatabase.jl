@@ -1,3 +1,17 @@
+"""
+    ReplitDatabase
+
+The `ReplitDatabase` module allows for easy access to the Repl.it database.
+
+## Exports
+
+- `ReplitDB` - an `AbstractDict{String,String}` interface to the Repl.it database.
+- `ReplitDatabaseCore` - the core functions which `ReplitDB` uses to communicate with the database.
+  - `get(key; url)`
+  - `set!(key, value; url)`
+  - `list([prefix]; url)`
+  - `delete!(key; url)`
+"""
 module ReplitDatabase
 export ReplitDB, ReplitDatabaseCore
 
@@ -10,25 +24,39 @@ end
 """
     ReplitDB(url = ENV["REPLIT_DB_URL"])
 
-An AbstractDict interface representing the Repl.it database.
+An `AbstractDict{String,String}` interface representing the Repl.it database.
 
 ## Examples
 
-```jldoctest
-julia> replitdb = ReplitDB()
+```julia
+julia> db = ReplitDB()
 ReplitDB()
 
-julia> replitdb["foo"] = "bar"
+julia> db["foo"] = "bar"
 "bar"
 
-julia> collect(keys(replitdb))
+julia> db["hello"] = "world"
+"bar"
+
+julia> collect(keys(db))
+2-element Array{String,1}:
+ "foo"
+ "hello"
+
+julia> collect(keys(db, "fo"))
 1-element Array{String,1}:
  "foo"
 
-julia> delete!(replitdb, "foo")
+julia> delete!(db, "foo")
 ReplitDB()
 
-julia> isempty(replitdb)
+julia> isempty(db)
+false
+
+julia> empty!(db)
+ReplitDB()
+
+julia> isempty(db)
 true
 ```
 """
@@ -55,6 +83,7 @@ function Base.empty!(db::ReplitDB)
     for key in keys(db)
         delete!(db, key)
     end
+    db
 end
 
 Base.get(db::ReplitDB, key::AbstractString, default) = get(() -> default, db, key)
@@ -78,7 +107,7 @@ Base.IteratorEltype(::ReplitDB) = Base.HasEltype()
 
 Base.IteratorSize(::ReplitDB) = Base.SizeUnknown()
 
-Base.keys(db::ReplitDB) = ReplitDBCore.list(url=db.url)
+Base.keys(db::ReplitDB, prefix::AbstractString="") = ReplitDatabaseCore.list(prefix, url=db.url)
 
 Base.length(db::ReplitDB) = length(keys(db))
 
@@ -104,8 +133,11 @@ function Base.setindex!(db::ReplitDB, value::AbstractString, key::AbstractString
     ReplitDatabaseCore.set!(key, value, url=db.url)
     value
 end
+
+Base.setindex(db::ReplitDB, ::Nothing, key::AbstractString) = delete!(db, key)
+
 Base.setindex!(db::ReplitDB, value, key::AbstractString) = db[key] = string(value)
 
-Base.show(io::IO, ::ReplitDB) = print(io, "ReplitDB()")
+Base.show(io::IO, ::MIME"text/plain", db::ReplitDB) = print(io, "ReplitDB()")
 
 end # module
