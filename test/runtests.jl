@@ -3,10 +3,12 @@ include(joinpath(@__DIR__, "..", "src", "ReplitDatabase.jl"))
 using .ReplitDatabase
 
 if "REPLIT_DB_URL" in keys(ENV)
-    @testset "Testing CRUD commands" begin
+    @testset "Database is empty" begin
         results = ReplitDatabaseCore.list()
         @test results == []
-        
+    end
+
+    @testset "Testing CRUD commands" begin        
         ReplitDatabaseCore.set!("hello", "world")
         results = ReplitDatabaseCore.list()
         @test results == ["hello"]
@@ -18,12 +20,12 @@ if "REPLIT_DB_URL" in keys(ENV)
     end
 
     @testset "AbstractDict interface" begin
-        db = ReplitDB()
         db["key"] = "value"
         @test ReplitDatabaseCore.get("key") == db["key"]
+        db["key"] = nothing
 
-        empty!(db)
         @test length(keys(db)) == 0
+        @test isempty(db)
     end
 
     @testset "Key with line breaks" begin

@@ -134,12 +134,32 @@ function Base.setindex!(db::ReplitDB, value::AbstractString, key::AbstractString
     value
 end
 
-Base.setindex(db::ReplitDB, ::Nothing, key::AbstractString) = delete!(db, key)
+Base.setindex!(db::ReplitDB, ::Nothing, key::AbstractString) = delete!(db, key)
 
 Base.setindex!(db::ReplitDB, value, key::AbstractString) = db[key] = string(value)
 
 Base.show(io::IO, ::MIME"text/plain", db::ReplitDB) = print(io, "ReplitDB()")
 
+"""
+    db::AbstractDict{String,String}
+
+The default Repl.it database. 
+
+## Examples
+```julia
+julia> db["foo"] = "bar"  # set a key/value pair
+"bar"
+
+julia> db["foo"]  # get a value
+"bar"
+
+julia> keys(db, "f")  # list all keys starting with an optional prefix
+1-element Array{String,1}:
+ "foo"
+
+julia> db["foo"] = nothing  # delete a key/value pair
+```
+"""
 db = ReplitDB()
 
 end # module

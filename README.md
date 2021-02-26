@@ -14,23 +14,33 @@ Pkg.add(url="https://github.com/stellartux/ReplitDatabase.jl")
 ## Use
 
 ```julia
-using ReplitDatabase
+julia> using ReplitDatabase
 
-# an AbstractDict{String,String} representing the database
-db = ReplitDB()
+julia> db # an AbstractDict{String,String} representing the database
+ReplitDB()
 
-# set the key "foo" to value "bar" in the database
-db["foo"] = "bar"
+julia> db["foo"] = "bar" # set "foo"=>"bar" in the database
+"bar"
 
-# gets the value associated with the key "foo" from the database
-db["foo"] # == "bar" 
+julia> db["baz"] = "qux" # set "baz"=>"qux" in the database
+"qux"
 
-# get the keys of the database
-keys(db) # == "foo"
+julia> db["foo"] # gets the value associated with the key "foo" from the database
+"bar" 
 
-# overwrite the database with a Dict{String,String}
-copy!(db, Dict("hello" => "world")) 
+julia> keys(db) # get the keys of the database
+2-element Array{String,1}:
+ "baz"
+ "foo"
 
-# clear the database
-empty!(db)
+julia> keys(db, "f") # get the keys filtered by a prefix
+1-element Array{String,1}:
+ "foo"
+
+julia> db["baz"] = nothing # delete a value from the database
+
+julia> copy!(db, Dict("hello" => "world")) # overwrite the database with a Dict{String,String}
+ReplitDB()
+
+julia> empty!(db) # clear the database
 ```

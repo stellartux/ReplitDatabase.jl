@@ -4,6 +4,13 @@
 The core functions which access the database.
 This implementation accesses the database using `curl` via shell calls.
 The `ReplitDB` interface type depends on these functions.
+
+## Exports
+
+- `get(key; url)`
+- `set!(key, value; url)`
+- `list([prefix]; url)`
+- `delete!(key; url)`
 """
 module ReplitDatabaseCore
 export delete!, get, list, set!
@@ -34,7 +41,7 @@ end
 
 Lists all of the keys in the Repl.it database, or all of the keys starting with `prefix` if specified.
 """
-function list(prefix=""::AbstractString; url::AbstractString=ENV["REPLIT_DB_URL"])::Vector{<:AbstractString}
+function list(prefix=""::AbstractString; url::AbstractString=ENV["REPLIT_DB_URL"])::Vector{String}
     escapedurl = "$(url)?prefix=$(escapeuri(prefix))&encode=true"
     result = readchomp(`curl -s "$(escapedurl)"`)
     isempty(result) ? String[] : unescapeuri.(split(result, '\n'))
