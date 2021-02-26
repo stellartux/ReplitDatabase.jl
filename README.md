@@ -1,5 +1,7 @@
 # ReplitDatabase.jl
 
+[![Run on Repl.it](https://repl.it/badge/github/stellartux/ReplitDatabase.jl)](https://repl.it/github/stellartux/ReplitDatabase.jl)
+
 A Julia interface to the [repl.it](https://repl.it/) [database](https://docs.repl.it/misc/database).
 
 ## Installation

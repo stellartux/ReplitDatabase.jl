@@ -92,7 +92,7 @@ Base.get(default::Function, db::ReplitDB, key::AbstractString) = haskey(db, key)
 
 Base.getkey(db::ReplitDB, key::AbstractString, default) = haskey(db, key) ? key : default
 
-Base.haskey(db::ReplitDB, key::AbstractString) = key in ReplitDatabaseCore.list(key, url=db.url)
+Base.haskey(db::ReplitDB, key::AbstractString) = key in keys(db, key)
 
 function Base.iterate(db::ReplitDB, state=keys(db))
     if !isempty(state)
