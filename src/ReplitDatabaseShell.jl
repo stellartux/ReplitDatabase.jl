@@ -8,13 +8,15 @@ The `ReplitDB` interface type depends on these functions.
 module ReplitDatabaseCore
 export delete!, get, list, set!
 
+using URIs: escapeuri, unescapeuri
+
 """
     delete!(key::AbstractString; url::AbstractString=ENV["REPLIT_DB_URL"])
 
 Deletes the value associated with the given key in the Repl.it database.
 """
 function delete!(key::AbstractString; url::AbstractString=ENV["REPLIT_DB_URL"])
-    success(`curl -s -XDELETE $(url * "/" * key)`)
+    success(`curl -s -XDELETE $(url * "/" * escapeuri(key))`)
 end
 
 """
@@ -23,7 +25,7 @@ end
 Get the value associated with the given key in the Repl.it database.
 """
 function get(key::AbstractString; url::AbstractString=ENV["REPLIT_DB_URL"])
-    readchomp(`curl -s $(url * "/" * key)`)
+    readchomp(`curl -s $(url * "/" * escapeuri(key))`)
 end
 
 """
@@ -33,8 +35,9 @@ end
 Lists all of the keys in the Repl.it database, or all of the keys starting with `prefix` if specified.
 """
 function list(prefix=""::AbstractString; url::AbstractString=ENV["REPLIT_DB_URL"])::Vector{<:AbstractString}
-    result = readchomp(`curl -s "$(url)?prefix=$(prefix)"`)
-    isempty(result) ? String[] : split(result, '\n')
+    escapedurl = "$(url)?prefix=$(escapeuri(prefix))&encode=true"
+    result = readchomp(`curl -s "$(escapedurl)"`)
+    isempty(result) ? String[] : unescapeuri.(split(result, '\n'))
 end
 
 """

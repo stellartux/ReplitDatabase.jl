@@ -13,7 +13,7 @@ The `ReplitDatabase` module allows for easy access to the Repl.it database.
   - `delete!(key; url)`
 """
 module ReplitDatabase
-export ReplitDB, ReplitDatabaseCore
+export db, ReplitDB, ReplitDatabaseCore
 
 include(joinpath(@__DIR__, "ReplitDatabaseShell.jl"))
 
@@ -139,5 +139,7 @@ Base.setindex(db::ReplitDB, ::Nothing, key::AbstractString) = delete!(db, key)
 Base.setindex!(db::ReplitDB, value, key::AbstractString) = db[key] = string(value)
 
 Base.show(io::IO, ::MIME"text/plain", db::ReplitDB) = print(io, "ReplitDB()")
+
+db = ReplitDB()
 
 end # module
