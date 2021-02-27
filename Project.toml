@@ -1,7 +1,7 @@
 name = "ReplitDatabase"
 uuid = "dc63741c-3aa2-41b7-ae98-f43d5024e4e5"
-authors = [""]
-version = "0.1.0"
+authors = ["Danny Robinson"]
+version = "0.1.1"
 
 [deps]
 URIs = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"

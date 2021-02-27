@@ -1,2 +1,0 @@
-run = "julia -L examples/main.jl"
-language = "julia"
